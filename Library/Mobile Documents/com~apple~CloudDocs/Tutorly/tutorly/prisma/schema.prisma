@@ -1,0 +1,137 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  id                String  @id @default(cuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+  users             users   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
+model classes {
+  id              String        @id @default(cuid())
+  title           String
+  subject         String
+  description     String?
+  price           Decimal       @db.Decimal(10, 2)
+  ageGroup        String?
+  schedule        Json?
+  stripeProductId String?       @unique
+  stripePriceId   String?       @unique
+  active          Boolean       @default(true)
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime
+  enrollments     enrollments[]
+}
+
+model enrollments {
+  id                   String   @id @default(cuid())
+  studentId            String
+  classId              String
+  stripeCustomerId     String?
+  stripeSubscriptionId String?
+  active               Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime
+  classes              classes  @relation(fields: [classId], references: [id], onDelete: Cascade)
+  users                users    @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([studentId, classId])
+}
+
+model sessions {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  users        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model subscriptions {
+  id                   String   @id @default(cuid())
+  userId               String?
+  studentName          String
+  studentEmail         String
+  studentYear          String
+  plan                 String
+  courses              Json
+  sessionsPerWeek      Int?
+  monthlyAmount        Decimal  @db.Decimal(10, 2)
+  stripeCustomerId     String?  @unique
+  stripeSubscriptionId String?  @unique
+  status               String   @default("active")
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime
+  users                users?   @relation(fields: [userId], references: [id])
+}
+
+model users {
+  id               String          @id @default(cuid())
+  name             String?
+  email            String          @unique
+  emailVerified    DateTime?
+  image            String?
+  password         String?
+  role             Role            @default(STUDENT)
+  username         String?         @unique
+  year             String?         // Year 1, Year 2, etc.
+  subscriptionId   String?         @unique
+  ageGroup         String?         // "years_1_4" or "years_4_plus" for UI theming
+  onboarded        Boolean         @default(false)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  accounts         accounts[]
+  enrollments      enrollments[]
+  auth_sessions    sessions[] // NextAuth sessions
+  live_sessions    live_sessions[]
+  subscriptions    subscriptions[]
+}
+
+model verification_tokens {
+  identifier String
+  token      String   @unique
+  expires    DateTime
+
+  @@unique([identifier, token])
+}
+
+model live_sessions {
+  id           String   @id @default(cuid())
+  userId       String
+  courseName   String
+  scheduledAt  DateTime
+  meetingLink  String?
+  status       String   @default("scheduled") // scheduled, completed, cancelled
+  recordingUrl String?
+  notes        String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  users        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([scheduledAt])
+}
+
+enum Role {
+  STUDENT
+  PARENT
+  ADMIN
+  VISITOR
+}
