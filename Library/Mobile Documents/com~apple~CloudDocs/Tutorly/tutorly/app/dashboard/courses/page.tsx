@@ -285,7 +285,7 @@ export default function CoursesPage() {
                             : 'Try a different filter'}
                     </p>
                     {courses.length === 0 && (
-                        <Button variant="primary" size="lg" href="/enroll">
+                        <Button variant="primary" size="lg" href="/contact">
                             Browse Courses
                         </Button>
                     )}

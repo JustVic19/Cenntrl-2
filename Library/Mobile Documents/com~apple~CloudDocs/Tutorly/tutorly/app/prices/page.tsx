@@ -2,60 +2,6 @@ import React from 'react';
 import Card from '@/components/ui/Card';
 import Button from '@/components/ui/Button';
 
-
-const pricingTiers = [
-    {
-        name: 'Steady',
-        price: 25,
-        period: 'per hour',
-        description: 'Perfect for early years students (Years 1-4). Weekly 1-hour sessions to build strong foundations.',
-        features: [
-            '1 hour per session',
-            'Years 1-4 students',
-            'Weekly lessons',
-            'Personalized lesson plan',
-            'Progress assessment',
-            'Homework help',
-        ],
-        popular: false,
-        color: 'var(--color-sky-blue)',
-    },
-    {
-        name: 'Focus',
-        price: 40,
-        period: 'per hour',
-        description: 'Ideal for older students (Years 4+). Intensive 2-hour sessions for exam preparation and advanced learning.',
-        features: [
-            '2 hours per session',
-            'Years 4+ students',
-            '2-3 sessions per week',
-            'Classroom teaching',
-            'Weekly progress review',
-            'Priority scheduling',
-            'Homework support',
-            'Test prep materials',
-        ],
-        popular: true,
-        color: 'var(--color-vibrant-pink)',
-    },
-    {
-        name: 'Intensive',
-        price: null,
-        period: '',
-        description: 'For students with specific needs. Tailored support and flexible arrangements.',
-        features: [
-            'Custom session frequency',
-            'Tailored curriculum',
-            'One-on-one attention',
-            'Flexible scheduling',
-            'Specialized support',
-        ],
-        popular: false,
-        color: 'var(--color-royal-blue)',
-        isCustom: true,
-    },
-];
-
 export default function PricesPage() {
     return (
         <>
@@ -66,7 +12,7 @@ export default function PricesPage() {
                         <div className="badge mb-lg">💰 Pricing</div>
 
                         <h1 style={{ marginBottom: 'var(--spacing-xl)' }}>
-                            Transparent, Fair Pricing
+                            Personalized Tutoring
                         </h1>
 
                         <p style={{
@@ -74,101 +20,98 @@ export default function PricesPage() {
                             color: 'var(--color-gray-700)',
                             marginBottom: 0
                         }}>
-                            Choose a plan that fits your learning goals and budget. All packages include personalized attention and proven results.
+                            Get in touch to discuss a customized learning plan tailored to your child's needs and goals.
                         </p>
                     </div>
                 </div>
             </section>
 
-            {/* Pricing Cards */}
+            {/* Pricing Card */}
             <section className="section">
                 <div className="container">
-                    <div className="grid grid-3">
-                        {pricingTiers.map((tier, index) => (
-                            <Card
-                                key={index}
-                                className="flex flex-col"
+                    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+                        <Card
+                            className="flex flex-col"
+                            style={{
+                                position: 'relative',
+                                borderColor: 'var(--color-royal-blue)',
+                                borderWidth: '6px'
+                            }}
+                        >
+                            <div
                                 style={{
-                                    position: 'relative',
-                                    height: '100%',
-                                    borderColor: tier.popular ? tier.color : 'var(--color-black)',
-                                    borderWidth: tier.popular ? '6px' : '4px'
+                                    position: 'absolute',
+                                    top: '-20px',
+                                    left: '50%',
+                                    transform: 'translateX(-50%)',
+                                    background: 'var(--color-royal-blue)',
+                                    color: 'white',
+                                    padding: 'var(--spacing-xs) var(--spacing-xl)',
+                                    borderRadius: 'var(--border-radius-full)',
+                                    border: '3px solid var(--color-black)',
+                                    fontSize: 'var(--font-size-sm)',
+                                    fontWeight: 'var(--font-weight-bold)',
+                                    whiteSpace: 'nowrap',
+                                    boxShadow: 'var(--shadow-sm)',
                                 }}
                             >
-                                {tier.popular && (
-                                    <div
-                                        style={{
-                                            position: 'absolute',
-                                            top: '-20px',
-                                            left: '50%',
-                                            transform: 'translateX(-50%)',
-                                            background: tier.color,
-                                            color: 'white',
-                                            padding: 'var(--spacing-xs) var(--spacing-xl)',
-                                            borderRadius: 'var(--border-radius-full)',
-                                            border: '3px solid var(--color-black)',
-                                            fontSize: 'var(--font-size-sm)',
-                                            fontWeight: 'var(--font-weight-bold)',
-                                            whiteSpace: 'nowrap',
-                                            boxShadow: 'var(--shadow-sm)',
-                                        }}
-                                    >
-                                        ⭐ MOST POPULAR
-                                    </div>
-                                )}
+                                ⭐ PERSONALIZED PLAN
+                            </div>
 
-                                <div style={{ marginBottom: 'var(--spacing-lg)' }}>
-                                    <h3 style={{ marginBottom: 'var(--spacing-sm)' }}>{tier.name}</h3>
-                                    <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-gray-700)', marginBottom: 0 }}>
-                                        {tier.description}
-                                    </p>
-                                </div>
-
-                                <div style={{ marginBottom: 'var(--spacing-2xl)' }}>
-                                    <div style={{
-                                        fontSize: tier.isCustom ? 'var(--font-size-3xl)' : 'var(--font-size-5xl)',
-                                        fontWeight: 'var(--font-weight-black)',
-                                        color: tier.color,
-                                        lineHeight: 1
-                                    }}>
-                                        {tier.isCustom ? 'Get in touch!' : `£${tier.price}`}
-                                    </div>
-                                    {!tier.isCustom && (
-                                        <div style={{
-                                            fontSize: 'var(--font-size-sm)',
-                                            color: 'var(--color-gray-700)',
-                                            marginTop: 'var(--spacing-xs)'
-                                        }}>
-                                            {tier.period}
-                                        </div>
-                                    )}
-                                </div>
-
+                            <div style={{ marginBottom: 'var(--spacing-2xl)' }}>
                                 <div style={{
-                                    flexGrow: 1,
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    gap: 'var(--spacing-md)',
-                                    marginBottom: 'var(--spacing-xl)'
+                                    fontSize: 'var(--font-size-3xl)',
+                                    fontWeight: 'var(--font-weight-black)',
+                                    color: 'var(--color-royal-blue)',
+                                    lineHeight: 1
                                 }}>
-                                    {tier.features.map((feature, idx) => (
-                                        <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
-                                            <span style={{ color: tier.color, fontSize: 'var(--font-size-lg)', fontWeight: 'bold' }}>✓</span>
-                                            <span style={{ fontSize: 'var(--font-size-base)' }}>{feature}</span>
-                                        </div>
-                                    ))}
+                                    Get in touch!
                                 </div>
+                                <div style={{
+                                    fontSize: 'var(--font-size-sm)',
+                                    color: 'var(--color-gray-700)',
+                                    marginTop: 'var(--spacing-xs)'
+                                }}>
+                                    Custom pricing based on your needs
+                                </div>
+                            </div>
 
-                                <Button
-                                    variant={tier.popular ? "royal" : "primary"}
-                                    size="md"
-                                    href={tier.isCustom ? "/contact" : `/enroll?plan=${tier.name.toLowerCase()}`}
-                                    style={{ width: '100%', marginTop: 'auto' }}
-                                >
-                                    {tier.isCustom ? 'Contact Me' : 'Get Started'}
-                                </Button>
-                            </Card>
-                        ))}
+                            <div style={{
+                                flexGrow: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                gap: 'var(--spacing-md)',
+                                marginBottom: 'var(--spacing-xl)'
+                            }}>
+                                {[
+                                    'Flexible session frequency (1-3 per week)',
+                                    'Available for Years 1-13',
+                                    'Personalized learning path',
+                                    'Classroom teaching methods',
+                                    'Progress tracking & reports',
+                                    'Regular parent updates',
+                                    'Homework support',
+                                    'Exam preparation',
+                                    'Test prep materials',
+                                    'Flexible scheduling',
+                                    'One-on-one attention',
+                                ].map((feature, idx) => (
+                                    <div key={idx} style={{ display: 'flex', alignItems: 'center', gap: 'var(--spacing-sm)' }}>
+                                        <span style={{ color: 'var(--color-royal-blue)', fontSize: 'var(--font-size-lg)', fontWeight: 'bold' }}>✓</span>
+                                        <span style={{ fontSize: 'var(--font-size-base)' }}>{feature}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <Button
+                                variant="royal"
+                                size="lg"
+                                href="/contact"
+                                style={{ width: '100%', marginTop: 'auto' }}
+                            >
+                                Contact Me →
+                            </Button>
+                        </Card>
                     </div>
                 </div>
             </section>
@@ -182,6 +125,20 @@ export default function PricesPage() {
 
                     <div style={{ maxWidth: '800px', margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 'var(--spacing-xl)' }}>
                         <Card>
+                            <h4 style={{ marginBottom: 'var(--spacing-md)' }}>How do I get started?</h4>
+                            <p style={{ color: 'var(--color-gray-700)', marginBottom: 0 }}>
+                                Simply click "Contact Me" above or visit the contact page to get in touch. We'll discuss your child's needs and create a customized learning plan together.
+                            </p>
+                        </Card>
+
+                        <Card>
+                            <h4 style={{ marginBottom: 'var(--spacing-md)' }}>What subjects do you cover?</h4>
+                            <p style={{ color: 'var(--color-gray-700)', marginBottom: 0 }}>
+                                I offer tutoring in Maths, English, and Science for students from Year 1 to Year 13, with specialized exam preparation for GCSEs and A-Levels.
+                            </p>
+                        </Card>
+
+                        <Card>
                             <h4 style={{ marginBottom: 'var(--spacing-md)' }}>Do you offer group sessions?</h4>
                             <p style={{ color: 'var(--color-gray-700)', marginBottom: 0 }}>
                                 Yes! I offer group sessions for students at similar levels. Group sessions provide collaborative learning opportunities while maintaining personalized attention.
@@ -189,23 +146,9 @@ export default function PricesPage() {
                         </Card>
 
                         <Card>
-                            <h4 style={{ marginBottom: 'var(--spacing-md)' }}>Can I cancel my package anytime?</h4>
+                            <h4 style={{ marginBottom: 'var(--spacing-md)' }}>What is your cancellation policy?</h4>
                             <p style={{ color: 'var(--color-gray-700)', marginBottom: 0 }}>
-                                Absolutely. You can cancel your monthly package at any time with 7 days notice.
-                            </p>
-                        </Card>
-
-                        <Card>
-                            <h4 style={{ marginBottom: 'var(--spacing-md)' }}>What payment methods do you accept?</h4>
-                            <p style={{ color: 'var(--color-gray-700)', marginBottom: 0 }}>
-                                We accept all major credit cards, debit cards, and digital payment methods through our secure Stripe integration.
-                            </p>
-                        </Card>
-
-                        <Card>
-                            <h4 style={{ marginBottom: 'var(--spacing-md)' }}>Can I switch between packages?</h4>
-                            <p style={{ color: 'var(--color-gray-700)', marginBottom: 0 }}>
-                                Yes! You can upgrade or downgrade your package at any time to better fit your needs.
+                                I require 24 hours notice for cancellations. Sessions cancelled with less notice will be charged at the full rate.
                             </p>
                         </Card>
                     </div>

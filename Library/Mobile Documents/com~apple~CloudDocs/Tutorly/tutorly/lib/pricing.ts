@@ -1,41 +1,35 @@
 // Pricing utility functions for Tutorly subscriptions
 
-export type PlanType = 'steady' | 'focus';
+export type PlanType = 'contact';
 
 export interface PlanDetails {
     name: string;
-    monthlyPrice: number;
-    hourlyRate: number;
-    sessionDuration: number; // in hours
+    tagline: string;
     description: string;
-    target: string;
+    features: string[];
+    cta: string;
+    ctaLink: string;
 }
 
 export const PLANS: Record<PlanType, PlanDetails> = {
-    steady: {
-        name: 'Steady',
-        monthlyPrice: 100,
-        hourlyRate: 25,
-        sessionDuration: 1,
-        description: 'Perfect for early years students (Years 1-4). Weekly 1-hour sessions to build strong foundations.',
-        target: 'Years 1-4',
-    },
-    focus: {
-        name: 'Focus',
-        monthlyPrice: 320,
-        hourlyRate: 40,
-        sessionDuration: 2,
-        description: 'Ideal for older students (Years 4+). Intensive 2-hour sessions for exam preparation and advanced learning.',
-        target: 'Years 4+',
+    contact: {
+        name: 'Contact Me',
+        tagline: 'Personalized Tutoring Tailored to Your Needs',
+        description: 'Get in touch to discuss a customized learning plan for your child.',
+        features: [
+            '2-3 sessions per week',
+            'Personalized learning path',
+            'Progress tracking & reports',
+            'Regular parent updates',
+            'Homework support',
+            'Exam preparation',
+            'Flexible scheduling',
+            'One-on-one attention',
+        ],
+        cta: 'Contact Me',
+        ctaLink: '/contact',
     },
 };
-
-/**
- * Get the monthly price for a plan (flat rate)
- */
-export function getMonthlyPrice(plan: PlanType): number {
-    return PLANS[plan].monthlyPrice;
-}
 
 /**
  * Get plan details
@@ -48,12 +42,5 @@ export function getPlanDetails(plan: PlanType): PlanDetails {
  * Validate plan type
  */
 export function isValidPlan(plan: string): plan is PlanType {
-    return plan === 'steady' || plan === 'focus';
-}
-
-/**
- * Format price for display
- */
-export function formatPrice(amount: number): string {
-    return `£${amount.toFixed(2)}`;
+    return plan === 'contact';
 }

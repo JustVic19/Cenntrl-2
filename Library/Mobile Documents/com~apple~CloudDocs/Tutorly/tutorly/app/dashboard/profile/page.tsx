@@ -430,7 +430,7 @@ export default function ProfilePage() {
                         }}>
                             No active subscription
                         </p>
-                        <Button variant="primary" size="lg" href="/enroll">
+                        <Button variant="primary" size="lg" href="/contact">
                             Browse Plans
                         </Button>
                     </div>

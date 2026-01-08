@@ -83,25 +83,33 @@ model subscriptions {
 }
 
 model users {
-  id               String          @id @default(cuid())
-  name             String?
-  email            String          @unique
-  emailVerified    DateTime?
-  image            String?
-  password         String?
-  role             Role            @default(STUDENT)
-  username         String?         @unique
-  year             String?         // Year 1, Year 2, etc.
-  subscriptionId   String?         @unique
-  ageGroup         String?         // "years_1_4" or "years_4_plus" for UI theming
-  onboarded        Boolean         @default(false)
-  createdAt        DateTime        @default(now())
-  updatedAt        DateTime        @updatedAt
-  accounts         accounts[]
-  enrollments      enrollments[]
-  auth_sessions    sessions[] // NextAuth sessions
-  live_sessions    live_sessions[]
-  subscriptions    subscriptions[]
+  id                   String                 @id @default(cuid())
+  name                 String?
+  email                String                 @unique
+  emailVerified        DateTime?
+  image                String?
+  password             String?
+  role                 Role                   @default(STUDENT)
+  username             String?                @unique
+  year                 String?
+  subscriptionId       String?                @unique
+  ageGroup             String?
+  onboarded            Boolean                @default(false)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  accounts             accounts[]
+  enrollments          enrollments[]
+  auth_sessions        sessions[]
+  live_sessions        live_sessions[]
+  subscriptions        subscriptions[]
+  // Admin relations
+  homeworkCreated      homework[]             @relation("HomeworkCreator")
+  testsCreated         tests[]                @relation("TestCreator")
+  messagesCreated      messages[]             @relation("MessageSender")
+  // Student relations
+  homeworkSubmissions  homework_submissions[]
+  testSubmissions      test_submissions[]
+  messageRecipients    message_recipients[]
 }
 
 model verification_tokens {
@@ -121,6 +129,7 @@ model live_sessions {
   status       String   @default("scheduled") // scheduled, completed, cancelled
   recordingUrl String?
   notes        String?
+  attendees    Json?    // Array of user IDs who attended
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   users        users    @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -129,9 +138,142 @@ model live_sessions {
   @@index([scheduledAt])
 }
 
+// ============================================
+// HOMEWORK SYSTEM
+// ============================================
+
+model homework {
+  id          String                 @id @default(cuid())
+  title       String
+  description String?
+  fileUrl     String?
+  fileType    String?                // pdf, docx, image, link
+  dueDate     DateTime?
+  assignedTo  String                 // "all", "year_X", or specific user ID
+  yearGroup   String?
+  createdBy   String
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  creator     users                  @relation("HomeworkCreator", fields: [createdBy], references: [id])
+  submissions homework_submissions[]
+
+  @@index([createdBy])
+  @@index([dueDate])
+}
+
+model homework_submissions {
+  id          String    @id @default(cuid())
+  homeworkId  String
+  studentId   String
+  fileUrl     String?
+  submittedAt DateTime  @default(now())
+  grade       String?
+  feedback    String?
+  graded      Boolean   @default(false)
+  gradedAt    DateTime?
+  homework    homework  @relation(fields: [homeworkId], references: [id], onDelete: Cascade)
+  student     users     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([homeworkId, studentId])
+  @@index([studentId])
+}
+
+// ============================================
+// TEST SYSTEM
+// ============================================
+
+model tests {
+  id          String             @id @default(cuid())
+  title       String
+  description String?
+  type        String             // "multiple_choice", "written", "file_upload", "mixed"
+  fileUrl     String?
+  dueDate     DateTime?
+  assignedTo  String             // "all", "year_X", or specific user ID
+  yearGroup   String?
+  autoGrade   Boolean            @default(false)
+  timeLimit   Int?               // minutes
+  createdBy   String
+  createdAt   DateTime           @default(now())
+  updatedAt   DateTime           @updatedAt
+  creator     users              @relation("TestCreator", fields: [createdBy], references: [id])
+  questions   test_questions[]
+  submissions test_submissions[]
+
+  @@index([createdBy])
+  @@index([dueDate])
+}
+
+model test_questions {
+  id            String  @id @default(cuid())
+  testId        String
+  questionText  String
+  questionType  String  // "multiple_choice", "written", "true_false"
+  options       Json?   // For multiple choice: ["A", "B", "C", "D"]
+  correctAnswer String? // For auto-grading
+  points        Int     @default(1)
+  orderIndex    Int
+  test          tests   @relation(fields: [testId], references: [id], onDelete: Cascade)
+
+  @@index([testId])
+}
+
+model test_submissions {
+  id          String    @id @default(cuid())
+  testId      String
+  studentId   String
+  answers     Json      // Student answers
+  fileUrl     String?
+  submittedAt DateTime  @default(now())
+  score       Float?
+  maxScore    Float?
+  grade       String?
+  feedback    String?
+  graded      Boolean   @default(false)
+  gradedAt    DateTime?
+  test        tests     @relation(fields: [testId], references: [id], onDelete: Cascade)
+  student     users     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@unique([testId, studentId])
+  @@index([studentId])
+}
+
+// ============================================
+// MESSAGING SYSTEM
+// ============================================
+
+model messages {
+  id         String               @id @default(cuid())
+  subject    String
+  content    String
+  sentBy     String
+  sentTo     String               // "all", "year_X", user ID, or "parents"
+  yearGroup  String?
+  createdAt  DateTime             @default(now())
+  sender     users                @relation("MessageSender", fields: [sentBy], references: [id])
+  recipients message_recipients[]
+
+  @@index([sentBy])
+  @@index([createdAt])
+}
+
+model message_recipients {
+  id        String    @id @default(cuid())
+  messageId String
+  userId    String
+  read      Boolean   @default(false)
+  readAt    DateTime?
+  message   messages  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  user      users     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([messageId, userId])
+  @@index([userId])
+}
+
 enum Role {
   STUDENT
   PARENT
+  TUTOR
   ADMIN
   VISITOR
 }
